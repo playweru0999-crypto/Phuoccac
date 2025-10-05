@@ -1,0 +1,51 @@
+local player = game.Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+local humanoid = character:WaitForChild("Humanoid")
+
+local WALK_NORMAL = 16
+local WALK_BOOST = 60
+local JUMP_NORMAL = 50
+local JUMP_BOOST = 120
+
+local isBoosted = false
+
+local screenGui = Instance.new("ScreenGui")
+screenGui.Parent = player:WaitForChild("PlayerGui")
+
+local button = Instance.new("TextButton")
+button.Size = UDim2.new(0, 120, 0, 50)
+button.Position = UDim2.new(0.05, 0, 0.85, 0)
+button.Text = "Boost OFF"
+button.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+button.TextColor3 = Color3.fromRGB(255, 255, 255)
+button.Font = Enum.Font.SourceSansBold
+button.TextSize = 20
+button.Parent = screenGui
+
+local function applyBoost(state)
+    if state then
+        humanoid.WalkSpeed = WALK_BOOST
+        humanoid.JumpPower = JUMP_BOOST
+        button.Text = "Boost ON"
+        button.BackgroundColor3 = Color3.fromRGB(0, 170, 0)
+    else
+        humanoid.WalkSpeed = WALK_NORMAL
+        humanoid.JumpPower = JUMP_NORMAL
+        button.Text = "Boost OFF"
+        button.BackgroundColor3 = Color3.fromRGB(170, 0, 0)
+    end
+end
+
+button.MouseButton1Click:Connect(function()
+    isBoosted = not isBoosted
+    applyBoost(isBoosted)
+end)
+
+player.CharacterAdded:Connect(function(char)
+    character = char
+    humanoid = char:WaitForChild("Humanoid")
+    isBoosted = false
+    applyBoost(false)
+end)
+
+applyBoost(false)
